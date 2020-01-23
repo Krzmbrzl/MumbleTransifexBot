@@ -208,12 +208,17 @@ if __name__ == "__main__":
         debug("Changed files: %s", " ".join(os.linesep.split(changedfiles)))
     
         info("Things changed & force pushing")
-        debug(git["commit", "-m", pr_commit % {'mode': mode,
-                            'minpercent': minpercent,
-                            'langcount': len(files)}]())
-        
-        debug(git["push", "-f", "origin", wr_branch]())
+        commit_msg = pr_commit % {'mode': mode, 'minpercent': minpercent, 'langcount': len(files)}
+        debug(git["commit", "-m", commit_msg]())
+
     
+        if pr:
+            info("PR exists already, squashing changes to commit in PR")
+            debug(git["reset", "--soft", "HEAD~1"])
+            debug(git["commit", "-m", commit_msg])
+
+        debug(git["push", "-f", "origin", wr_branch]())
+        
     if not pr:
         info("No existing PR, creating new one")
         pr = createNewPullRequest(g,
