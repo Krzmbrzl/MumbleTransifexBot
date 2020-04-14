@@ -209,13 +209,12 @@ if __name__ == "__main__":
     
         info("Things changed & force pushing")
         commit_msg = pr_commit % {'mode': mode, 'minpercent': minpercent, 'langcount': len(files)}
-        debug(git["commit", "-m", commit_msg]())
 
-    
         if pr:
             info("PR exists already, squashing changes to commit in PR")
             debug(git["reset", "--soft", "HEAD~1"])
-            debug(git["commit", "-m", commit_msg])
+
+        debug(git["commit", "-m", commit_msg]())
 
         debug(git["push", "-f", "origin", wr_branch]())
         
